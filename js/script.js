@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const isHtmlDirectoryPage = window.location.pathname.includes('/html/');
+    const sharedComponentsPath = isHtmlDirectoryPage ? 'shared' : 'html/shared';
     
     // --- 1. INITIALISEER ANIMATIES (AOS) ---
     // We checken eerst of AOS geladen is om foutmeldingen te voorkomen
@@ -10,13 +12,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- 2. HEADER LADEN & DARK MODE LOGICA ---
-    fetch('html/shared/header.html')
+    fetch(`${sharedComponentsPath}/header.html`)
         .then(response => {
             if (!response.ok) throw new Error("Header not found");
             return response.text();
         })
         .then(data => {
             document.getElementById('header').innerHTML = data;
+
+            // Rewrite shared-header links for root pages where needed.
+            if (!isHtmlDirectoryPage) {
+                document.querySelectorAll('#header [data-root-href]').forEach((el) => {
+                    const rootHref = el.getAttribute('data-root-href');
+                    if (rootHref) {
+                        el.setAttribute('href', rootHref);
+                    }
+                });
+            }
 
             // Nu de header er is, kunnen we de Dark Mode knop zoeken
             const toggleSwitch = document.querySelector('#checkbox');
@@ -47,12 +59,69 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.error('Error loading header:', error));
 
     // --- 3. FOOTER LADEN ---
-    fetch('html/shared/footer.html')
+    fetch(`${sharedComponentsPath}/footer.html`)
         .then(response => response.text())
         .then(data => document.getElementById('footer').innerHTML = data);
 
 
-    // --- 4. CONTACT FORMULIER LOGICA ---
+    // --- 4. IMAGE ZOOM / LIGHTBOX ---
+    const lightbox = document.createElement('div');
+    lightbox.className = 'image-lightbox';
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.innerHTML = `
+        <button type="button" class="image-lightbox-close" aria-label="Close image">&times;</button>
+        <img class="image-lightbox-img" alt="Zoomed image preview">
+    `;
+    document.body.appendChild(lightbox);
+
+    const lightboxImg = lightbox.querySelector('.image-lightbox-img');
+    const lightboxCloseBtn = lightbox.querySelector('.image-lightbox-close');
+
+    const closeLightbox = () => {
+        lightbox.classList.remove('is-open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('image-zoom-open');
+        lightboxImg.removeAttribute('src');
+        lightboxImg.removeAttribute('alt');
+    };
+
+    const openLightbox = (img) => {
+        const src = img.currentSrc || img.src;
+        if (!src) return;
+
+        lightboxImg.src = src;
+        lightboxImg.alt = img.alt || 'Zoomed image';
+        lightbox.classList.add('is-open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('image-zoom-open');
+    };
+
+    document.querySelectorAll('img').forEach((img) => {
+        if (img.closest('#header') || img.closest('#footer') || img.closest('#projects') || img.classList.contains('no-zoom')) return;
+        img.classList.add('zoomable-image');
+    });
+
+    document.addEventListener('click', (event) => {
+        const clickedImage = event.target.closest('img.zoomable-image');
+
+        if (clickedImage) {
+            openLightbox(clickedImage);
+            return;
+        }
+
+        if (event.target === lightbox || event.target === lightboxCloseBtn) {
+            closeLightbox();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+            closeLightbox();
+        }
+    });
+
+
+    // --- 5. CONTACT FORMULIER LOGICA ---
     const form = document.getElementById('myForm');
     const submitBtn = document.getElementById('submitButton');
     const overlay = document.getElementById('overlay');
