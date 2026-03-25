@@ -1,43 +1,12 @@
 // Login and Register Form Handlers
 document.addEventListener("DOMContentLoaded", () => {
     
-    // Login Form Handler
+    // Login is temporarily unavailable.
     const loginForm = document.querySelector('#login form');
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            const formData = new FormData(loginForm);
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            // Disable button and show loading
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
-            
-            try {
-                const response = await fetch('../backend/auth/login.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showAlert('success', result.message);
-                    setTimeout(() => {
-                        window.location.href = result.redirect;
-                    }, 1000);
-                } else {
-                    showAlert('danger', result.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            } catch (error) {
-                showAlert('danger', 'An error occurred. Please try again.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-            }
+            showAlert('warning', 'Login is coming soon. Please use Register for now.');
         });
     }
     
