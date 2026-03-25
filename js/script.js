@@ -155,4 +155,4 @@ document.addEventListener("DOMContentLoaded", () => {
             form.reset(); // Maak formulier leeg na verzenden
         });
     }
-});
+}); 
