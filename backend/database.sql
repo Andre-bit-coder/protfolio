@@ -17,4 +17,4 @@ CREATE TABLE IF NOT EXISTS users (
 -- Insert a sample user (password is "password123")
 INSERT INTO users (name, email, password) VALUES 
 ('Andre Huang', 'andre@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
- 
+  

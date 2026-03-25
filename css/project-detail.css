@@ -74,4 +74,4 @@
 /* Zorg dat tekstkleur altijd reageert op het thema */
 p, li {
     color: var(--text-color);
-} 
+}  

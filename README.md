@@ -264,4 +264,4 @@ Dit project is gelicenseerd onder de MIT License.
 - AOS Library voor scroll animaties
 - Bootstrap Icons voor iconen
 - Google Fonts voor Poppins font
- 
+  

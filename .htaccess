@@ -23,4 +23,4 @@ Options All -Indexes
 
 # Prevent access to .git folder
 RedirectMatch 404 /\.git
- 
+  
