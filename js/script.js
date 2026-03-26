@@ -148,11 +148,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         confirmBtn.addEventListener('click', () => {
-            alert('Bericht verstuurd! (Simulatie)');
-            // form.submit(); // Uncomment dit als je het echt wilt versturen
-            overlay.style.display = 'none';
-            modal.style.display = 'none';
-            form.reset(); // Maak formulier leeg na verzenden
+            // Collect form data
+            const formData = new FormData(form);
+            
+            // Submit form via fetch API to Formspree
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Formspree response:', data);
+                alert('Bericht succesvol verstuurd! Dank je wel voor je bericht.');
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+                form.reset();
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                alert('Er is een fout opgetreden bij het verzenden van het bericht. Probeer het later opnieuw.');
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+            });
         });
     }
 });  
